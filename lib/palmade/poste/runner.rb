@@ -6,28 +6,24 @@ module Palmade::Poste
 
     attr_reader :options
 
-    def self.run!(argv)
-      new.run!(argv)
-    end
-
     def initialize
       @options = { }
-      @config = nil
     end
 
     def run!(argv)
       parse_options.parse!(argv)
-      run_cmd!(argv)
-    end
 
-    def run_cmd!(argv)
       cmd = argv.first
-
       unless cmd.nil?
         case cmd.to_sym
         when :start
+          cmd_start
         when :stop
+          cmd_stop
         when :restart
+          cmd_restart
+        when :diag
+          cmd_diag
         else
           raise CmdError, "Unknown command #{cmd}"
         end
@@ -39,18 +35,44 @@ module Palmade::Poste
     protected
 
     def configure
-      config_file = options.include?(:config_file) ? options[:config_file] : DEFAULT_CONFIG_FILE
+      if defined?(@config)
+        @config
+      else
+        config_file = options.include?(:config_file) ? options[:config_file] : DEFAULT_CONFIG_FILE
+        @config = Config.parse(config_file)
+      end
+    end
 
-      @config = Config.parse(config_file)
+    def init
+      if defined?(@init)
+        @init
+      else
+        @init = Palmade::Poste.init!(@config)
+      end
+    end
+
+    def cmd_diag
+      configure
+      init.say "== CONFIG ==\n%s\n", @config.diagnostic_dump
     end
 
     def cmd_start
+      configure
+
+      smtps = init.smtp_server
+      smtps.configure
+      smtps.start
     end
 
     def cmd_stop
+      configure
+
+      # Send a KILL signal to running daemon
     end
 
     def cmd_restart
+      cmd_stop
+      cmd_start
     end
 
     def show_help

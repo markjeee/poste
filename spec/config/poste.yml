@@ -1,0 +1,20 @@
+# Can be an absolute, or relative to current working directory
+working_path: var/lib/poste
+
+# Can be absolute, or relative to working path
+tmp_path: tmp
+
+# Can be absolute, or relative to log_path
+log_path: log
+
+mongo:
+  host: 127.0.0.1
+  port:
+  user:
+  password:
+  database: poste
+
+smtp:
+  listen:
+    - 127.0.0.1:2525
+    - 127.0.0.1:2552
