@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+require 'optparse'
+require 'rubygems'
+
+relative_poste_path = File.expand_path(File.join(File.dirname(__FILE__), '../lib/palmade'))
+if File.exists?(relative_poste_path)
+  require File.join(relative_poste_path, 'poste')
+else
+  gem 'poste'
+  require 'palmade/poste'
+end
+
+Palmade::Poste.run!(ARGV)
