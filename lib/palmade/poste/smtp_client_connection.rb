@@ -20,9 +20,9 @@ module Palmade::Poste
     include Receivers
 
     @@params = {
-      :chunksize => 4000,
-      :max_data_size => 20000000,
-      :verbose => false
+      :chunksize => 16384, # 16k chunky goodness
+      :max_data_size => 20 * 1024 * 1024, # 20Megs
+      :verbose => true
     }
 
     def self.params=(params = { })
@@ -80,6 +80,12 @@ module Palmade::Poste
       @databuffer.clear
     end
 
+    def send_data(d)
+      super
+
+      if_verbose { vv "<<< %s", d }
+    end
+
     protected
 
     C550RequireTLS = "550 This server requires STARTTLS\r\n".freeze
@@ -95,24 +101,29 @@ module Palmade::Poste
       end
     end
 
-    def require_auth?
-      @params[:auth].to_sym == :required
-    end
-
     def support_auth?
       @params[:auth]
     end
 
-    def require_tls?
-      @params[:starttls].to_sym == :required
+    def require_auth?
+      support_auth? && @params[:auth].to_sym == :required
     end
 
     def support_tls?
       @params[:starttls]
     end
 
+    def require_tls?
+      support_tls? && @params[:starttls].to_sym == :required
+    end
+
     def if_verbose(&block)
       yield if @params[:verbose]
+    end
+
+    def vv(fmt, *args)
+      # :TODO: change to also use log file
+      $stderr.puts sprintf(fmt, *args)
     end
 
     def add_state(s)

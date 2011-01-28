@@ -30,7 +30,7 @@ module Palmade::Poste
       AuthRegex = /\AAUTH\s+/i.freeze
 
       def receive_line(ln)
-        if_verbose { $>.puts ">>> #{ln}" }
+        if_verbose { vv ">>> %s", ln }
 
         if state?(:data)
           process_data_line(ln)
@@ -41,7 +41,7 @@ module Palmade::Poste
           when EhloRegex
             process_ehlo $'.dup
           when HeloRegex
-          process_helo $'.dup
+            process_helo $'.dup
           when MailFromRegex
             process_mail_from $'.dup
           when RcptToRegex
@@ -227,11 +227,21 @@ module Palmade::Poste
           if state?(:mail_from)
             send_data C503MailAlreadyGiven
           else
-            unless receive_sender(sender)
-              send_data C550SenderUnacceptable
-            else
+            succeeded = proc {
               send_data C250OkReply
               add_state :mail_from
+            }
+
+            failed = proc {
+              send_data C550SenderUnacceptable
+            }
+
+            d = receive_sender(sender)
+            if d.respond_to?(:set_deferred_status)
+              d.callback(&succeeded)
+              d.errback(&failed)
+            else
+              (d ? succeeded : failed).call
             end
           end
         end
@@ -254,7 +264,7 @@ module Palmade::Poste
               send_data C550RecipientUnacceptable
             }
 
-            d = receive_recipient rcpt
+            d = receive_recipient(rcpt)
             if d.respond_to?(:set_deferred_status)
               d.callback(&succeeded)
               d.errback(&failed)
@@ -271,7 +281,7 @@ module Palmade::Poste
 
       def process_data
         check_requirements do
-          unless state?(:mail_form, :rcpt)
+          unless state?(:mail_from, :rcpt)
             send_data C503OperationSequenceErrorReply
           else
             succeeded = proc {

@@ -30,7 +30,6 @@ module Palmade::Poste
       def receive_transaction
         if @ehlo_domain
           # save current ehlo_domain to the current message
-
           @ehlo_domain = nil
         end
 
@@ -69,7 +68,7 @@ module Palmade::Poste
       # via the multiple calls to receive_data_chunk.
       #
       def receive_message
-        # :TODO:
+        true
       end
 
     end
