@@ -39,12 +39,16 @@ module Palmade::Poste
       # Called when getting the MAIL FROM command, Check validity, and
       # fail as necessary.
       #
+      # :TODO: Add checking if sender can send a message through here.
+      #
       def receive_sender(sender)
         true
       end
 
       # Called when getting a RCPT TO command. Check validity, and
       # fail as necessary.
+      #
+      # :TODO: Add checking if recipient can be routed through here.
       #
       def receive_recipient(rcpt)
         true

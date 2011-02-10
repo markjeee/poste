@@ -32,7 +32,7 @@ module Palmade::Poste
             end
 
             receive_line ln
-            receive_data data[(ix+@lt2_delimiter.length)..-1]
+            receive_data data[(ix + @lt2_delimiter.length)..-1]
           else
             @lt2_linebuffer << data
           end

@@ -14,6 +14,7 @@ module Palmade
 
     autoload :SmtpServer, File.join(POSTE_LIB_DIR, 'poste/smtp_server')
     autoload :SmtpClientConnection, File.join(POSTE_LIB_DIR, 'poste/smtp_client_connection')
+    autoload :SmtpMessage, File.join(POSTE_LIB_DIR, 'poste/smtp_message')
 
     class PosteError < StandardError; end
     class ConfigError < PosteError; end

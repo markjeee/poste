@@ -11,5 +11,7 @@ module Palmade::Poste
     Cdot = '.'.freeze
     Czerobyte = "\000".freeze
     Cnewline = "\n".freeze
+
+    SMTP_MESSAGE_TRX_ID_FORMAT = "%04x%04x%04x%06x%06x%s".freeze
   end
 end

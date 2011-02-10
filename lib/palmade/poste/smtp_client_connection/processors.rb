@@ -117,7 +117,7 @@ module Palmade::Poste
           reset_protocol_state
           add_state :ehlo
         else
-        send_data C550RequestedActionNotTaken
+          send_data C550RequestedActionNotTaken
         end
       end
 
@@ -287,6 +287,7 @@ module Palmade::Poste
             succeeded = proc {
               send_data C354SendItReply
               add_state :data
+
               @databuffer = [ ]
             }
 
@@ -346,3 +347,4 @@ module Palmade::Poste
     end
   end
 end
+

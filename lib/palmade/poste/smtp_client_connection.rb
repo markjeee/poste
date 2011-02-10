@@ -56,9 +56,6 @@ module Palmade::Poste
       @state << :starttls if s.include?(:starttls)
       @state << :ehlo if s.include?(:ehlo)
 
-      # reset buffers, and other data
-      @databuffer = [ ]
-
       receive_transaction
     end
 
