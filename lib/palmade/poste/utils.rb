@@ -3,6 +3,12 @@ require 'socket'
 
 module Palmade::Poste
   module Utils
+
+    Chex_format = "%02x".freeze
+    def self.to_hex(i)
+      sprintf(Chex_format, i)
+    end
+
     def self.symbolize_keys(hash)
       hash.inject({}) do |options, (key, value)|
         options[(key.to_sym rescue key) || key] = value

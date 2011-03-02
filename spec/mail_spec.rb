@@ -29,7 +29,7 @@ require File.expand_path('../spec_helper', __FILE__)
 <<< 221 Ok
 =end
 
-context "Mail" do
+describe "Mail", :mail => true do
   describe "deliver" do
     before(:all) do
       @config = Palmade::Poste::Config.parse(SPEC_POSTE_CONFIG_FILE)

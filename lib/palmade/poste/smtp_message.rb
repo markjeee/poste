@@ -1,4 +1,6 @@
 require 'tempfile'
+require 'digest/md5'
+require 'tempfile'
 
 module Palmade::Poste
   class SmtpMessage
@@ -6,9 +8,11 @@ module Palmade::Poste
 
     # maximum data in memory is 640kb
     MAX_DATA_IN_MEMORY = 640 * 1024
+    # MAX_DATA_IN_MEMORY = 16
 
     SMTP_MESSAGE_TEMP_FILE_PREFIX = "#{PROGRAM_NAME}.smtp_message".freeze
 
+    attr_reader :transaction_id
     attr_reader :sender
     attr_reader :recipients
     attr_reader :data
@@ -38,7 +42,7 @@ module Palmade::Poste
       @transaction_date = nil
 
       @sender = nil
-      @recipients = nil
+      @recipients = [ ]
 
       @data = [ ]
       @data_wrtn = 0
@@ -51,6 +55,7 @@ module Palmade::Poste
     def new_transaction!
       @transaction_id = self.class.generate_trx_id
       @transaction_date = Time.now.utc
+      @transaction_id
     end
 
     def set_sender(sender)
@@ -69,6 +74,15 @@ module Palmade::Poste
       end
     end
 
+    # invokes, initial storage in var spool
+    # Strategy:
+    #   store in spool directory, and then schedule it for
+    #   storing in mongodb.
+    #
+    def store
+
+    end
+
     def close
       unless @tmp_file.nil?
         @tmp_file.close; @tmp_file.unlink
@@ -76,6 +90,10 @@ module Palmade::Poste
       end
 
       @data.clear
+    end
+
+    def data_size
+      @data_wrtn
     end
 
     protected
@@ -95,16 +113,17 @@ module Palmade::Poste
 
         if @data_wrtn > MAX_DATA_IN_MEMORY
           # transfer to tmp file, as needed
-          @tmp_file = TempFile.new(SMTP_MESSAGE_TEMP_FILE_PREFIX)
+          @tmp_file = Tempfile.new(SMTP_MESSAGE_TEMP_FILE_PREFIX)
 
           @data.each { |d1| @tmp_file.write(d1) }
           @data.clear
         end
-
-        @data_wrtn
       else
         @tmp_file.write(d)
+        @data_wrtn += d.length
       end
+
+      @data_wrtn
     end
   end
 end

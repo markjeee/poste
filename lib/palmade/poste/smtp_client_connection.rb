@@ -36,6 +36,10 @@ module Palmade::Poste
       init_protocol_state
     end
 
+    def set_server(s)
+      @smtp_server = s
+    end
+
     def params=(params)
       @params.merge!(params)
     end
@@ -46,6 +50,7 @@ module Palmade::Poste
 
       # init data buffer
       @databuffer = [ ]
+      @message = nil
     end
 
     def reset_protocol_state
@@ -75,6 +80,7 @@ module Palmade::Poste
     #
     def connection_ended
       @databuffer.clear
+      @message.close unless @message.nil?
     end
 
     def send_data(d)

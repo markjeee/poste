@@ -1,6 +1,6 @@
 require File.expand_path('../spec_helper', __FILE__)
 
-context "Config" do
+describe "Config" do
   describe "parse" do
     before(:all) do
       @config = Palmade::Poste::Config.parse(SPEC_POSTE_CONFIG_FILE)
@@ -11,7 +11,7 @@ context "Config" do
     end
 
     it "should load working_path" do
-      @config[:working_path].should == "var/lib/poste"
+      @config[:working_path].should == "spec/var/lib/poste"
     end
 
     it "should load tmp_path" do

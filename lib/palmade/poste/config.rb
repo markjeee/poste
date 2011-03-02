@@ -6,9 +6,22 @@ module Palmade::Poste
       :working_path => '/var/lib/poste'.freeze,
 
       # relative to the working directory
-      :spool_path => 'spool'.freeze,
       :tmp_path => 'tmp'.freeze,
       :log_path => 'log'.freeze,
+
+      # spool directory
+      :spool => {
+        :path => 'spool'.freeze,
+        :dirs => 64
+      },
+
+      # SMTP settings
+      :smtp => {
+        :listen => [
+                    "127.0.0.1:2525".freeze,
+                    "127.0.0.1:2552".freeze
+                   ]
+      },
 
       # default mongo settings
       :mongo => {
@@ -17,6 +30,11 @@ module Palmade::Poste
         :user => 'root'.freeze,
         :password => nil,
         :database => 'poste'.freeze
+      },
+
+      # SMTP relay
+      :relay => {
+        :default => [ "127.0.0.1:25" ]
       }
     }
 
@@ -57,18 +75,49 @@ DIAG
       File.expand_path(@config[:working_path])
     end
 
+    def spool
+      @config[:spool]
+    end
+
+    def mongo
+      @config[:mongo]
+    end
+
+    def smtp
+      @config[:smtp]
+    end
+
+    def relay
+      @config[:relay]
+    end
+
     protected
 
     def parse_config(config_hash)
-      @config = DEFAULT_CONFIG.merge(Utils.symbolize_keys(config_hash))
+      ch = Utils.symbolize_keys(config_hash)
 
-      # normalize mongo config
-      if @config.include?(:mongo)
-        @config[:mongo] = Utils.symbolize_keys(@config[:mongo])
+      @config = { }
+      DEFAULT_CONFIG.each do |k, v|
+        if ch.include?(k)
+          case v
+          when Hash
+            @config[k] = config_merge(v, Utils.symbolize_keys(ch[k]))
+          else
+            @config[k] = ch[k]
+          end
+        else
+          @config[k] = v
+        end
       end
 
-      if @config.include?(:smtp)
-        @config[:smtp] = Utils.symbolize_keys(@config[:smtp])
+      @config
+    end
+
+    def config_merge(from, to)
+      unless to.nil?
+        from.merge(to)
+      else
+        { }.merge(from)
       end
     end
   end

@@ -24,6 +24,8 @@ module Palmade::Poste
           cmd_restart
         when :diag
           cmd_diag
+        when :initialize_spool
+          cmd_initialize_spool
         else
           raise CmdError, "Unknown command #{cmd}"
         end
@@ -40,6 +42,7 @@ module Palmade::Poste
       else
         config_file = options.include?(:config_file) ? options[:config_file] : DEFAULT_CONFIG_FILE
         @config = Config.parse(config_file)
+        Palmade::Poste.config = @config
       end
     end
 
@@ -73,6 +76,11 @@ module Palmade::Poste
     def cmd_restart
       cmd_stop
       cmd_start
+    end
+
+    def cmd_initialize_spool
+      configure
+      Palmade::Poste::SpoolMaintainer.initialize_spool_path
     end
 
     def show_help

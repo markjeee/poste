@@ -33,6 +33,11 @@ module Palmade::Poste
           @ehlo_domain = nil
         end
 
+        @message = SmtpMessage.new
+        trx_id = @message.new_transaction!
+
+        if_verbose { vv("New message transaction: %s", trx_id) }
+
         true
       end
 
@@ -42,6 +47,7 @@ module Palmade::Poste
       # :TODO: Add checking if sender can send a message through here.
       #
       def receive_sender(sender)
+        @message.set_sender(sender)
         true
       end
 
@@ -51,6 +57,7 @@ module Palmade::Poste
       # :TODO: Add checking if recipient can be routed through here.
       #
       def receive_recipient(rcpt)
+        @message.add_recipient(rcpt)
         true
       end
 
@@ -61,7 +68,7 @@ module Palmade::Poste
       # Called when receiving data chunk, X chunk size at a time.
       #
       def receive_data_chunk(data)
-        # :TODO:
+        @message << data
       end
 
       # Called when the entire message has been received
@@ -72,9 +79,16 @@ module Palmade::Poste
       # via the multiple calls to receive_data_chunk.
       #
       def receive_message
+        if_verbose { vv("Message Trx Id: %s\nSender: %s\nRecipients%s\nData size:%d",
+                        @message.transaction_id,
+                        @message.sender,
+                        @message.recipients.inspect,
+                        @message.data_size) }
+
+        @message.store
+
         true
       end
-
     end
   end
 end

@@ -1,6 +1,6 @@
 require File.expand_path('../spec_helper', __FILE__)
 
-context "Init" do
+describe "Init" do
   describe "init" do
     before(:all) do
       @config = Palmade::Poste::Config.parse(SPEC_POSTE_CONFIG_FILE)
