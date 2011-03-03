@@ -1,8 +1,8 @@
 module Palmade::Poste
-  class SmtpMessage
-    module SpoolSupport
+  class MimeMessage
+    module MongoSupport
       module ClassMethods
-        def load_from_spool
+        def load_from_mongo
 
         end
       end
@@ -11,11 +11,11 @@ module Palmade::Poste
         base.extend(ClassMethods)
       end
 
-      def load_from_spool
+      def write_to_mongo
 
       end
 
-      def write_to_spool
+      def load_from_mongo
 
       end
     end

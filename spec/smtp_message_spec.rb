@@ -8,7 +8,7 @@ describe "SMTP Message" do
       @smtp_server = @init.smtp_server
       @smtp_server.configure
 
-      @message = Palmade::Poste::SmtpMessage.new
+      @message = Palmade::Poste::MimeMessage.new
       @message.new_transaction!
 
       @message.set_sender("mark@simpleteq.com")
@@ -42,7 +42,7 @@ describe "SMTP Message" do
     end
 
     it "should store it to spool" do
-
+      @message.store
     end
   end
 end

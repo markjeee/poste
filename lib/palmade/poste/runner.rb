@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'optparse'
 
 module Palmade::Poste
@@ -24,8 +25,10 @@ module Palmade::Poste
           cmd_restart
         when :diag
           cmd_diag
-        when :initialize_spool
-          cmd_initialize_spool
+        when :initialize
+          cmd_initialize
+        when :list_spool
+          cmd_list_spool
         else
           raise CmdError, "Unknown command #{cmd}"
         end
@@ -62,6 +65,7 @@ module Palmade::Poste
     def cmd_start
       configure
 
+      # TODO: Change to use puppet_master
       smtps = init.smtp_server
       smtps.configure
       smtps.start
@@ -78,9 +82,29 @@ module Palmade::Poste
       cmd_start
     end
 
-    def cmd_initialize_spool
+    def cmd_initialize
       configure
-      Palmade::Poste::SpoolMaintainer.initialize_spool_path
+
+      FileUtils.mkpath(@config.tmp_path)
+      FileUtils.mkpath(@config.log_path)
+
+      SpoolMaintainer.initialize_spool_path
+    end
+
+    def cmd_list_spool
+      configure
+
+      ent = SpoolMaintainer.find_spool_entries
+
+      unless ent.empty?
+        puts "Found %d entries" % ent.size
+        ent.each do |e|
+          sm = MimeMessage.create_from_spool(e.first)
+          puts "  %s %s" % [ sm.transaction_id, Utils.cleanup_email(sm.sender) ]
+        end
+      else
+        puts "Found no spool entries"
+      end
     end
 
     def show_help

@@ -36,7 +36,7 @@ describe "Mail", :mail => true do
       @init = Palmade::Poste.init!(@config)
 
       @mail = Mail.new do
-        to [ 'mark@simpleteq.com', 'mark@caresharing.eu' ]
+        to [ 'Mark John Buenconsejo <mark@simpleteq.com>', 'mark@caresharing.eu' ]
         cc 'mark@etroduce.com'
         from 'mark@mark-desktop.markjeee.com'
         subject 'Hello World'

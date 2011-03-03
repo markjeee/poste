@@ -28,10 +28,11 @@ module Palmade::Poste
       end
     end
 
-    def self.calculate_spool_path(message_id)
-      part_num = message_id[0,2].to_i(16)
+    def self.calculate_spool_path(trans_id)
+      part_num = trans_id[0,2].to_i(16)
       part_name = Utils.to_hex(part_num % spool_dirs)
-      File.join(spool_path, part_name, message_id)
+
+      File.join(spool_path, part_name, trans_id)
     end
 
     def self.spool_dirs
@@ -44,6 +45,16 @@ module Palmade::Poste
         spool_path = File.join(config.working_path, spool_path)
       end
       spool_path
+    end
+
+    def self.find_spool_entries
+      Dir.glob(File.join(spool_path, "**/*.meta")).collect { |e|
+        if e =~ /\A(.+\/([0-9a-f]+))\.meta\Z/
+          [ $~[2], e, $~[1] ]
+        else
+          nil
+        end
+      }.uniq
     end
   end
 end

@@ -8,3 +8,4 @@ log
 tmp
 .yardoc
 /doc/yardoc
+/spec

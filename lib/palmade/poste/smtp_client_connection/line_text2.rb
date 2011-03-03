@@ -7,13 +7,19 @@
 module Palmade::Poste
   class SmtpClientConnection
     module LineText2
-      include Constants
-
       MaxLineLength = 16 * 1024
       MaxBinaryLength = 32 * 1024 * 1024
 
+      Cnewline = "\n".freeze
+      Cempty = "".freeze
+      Cbinary = Encoding.find('binary')
+
       def receive_data(data)
         return unless (data && data.length > 0)
+
+        # force BINARY encoding, we don't want anything to do
+        # with the encoding of the data, let the apps deal with it.
+        data.force_encoding(Cbinary)
 
         # Do this stuff in lieu of a constructor.
         @lt2_mode ||= :lines

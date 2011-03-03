@@ -33,7 +33,7 @@ module Palmade::Poste
           @ehlo_domain = nil
         end
 
-        @message = SmtpMessage.new
+        @message = MimeMessage.new
         trx_id = @message.new_transaction!
 
         if_verbose { vv("New message transaction: %s", trx_id) }
@@ -48,6 +48,7 @@ module Palmade::Poste
       #
       def receive_sender(sender)
         @message.set_sender(sender)
+
         true
       end
 
@@ -58,6 +59,7 @@ module Palmade::Poste
       #
       def receive_recipient(rcpt)
         @message.add_recipient(rcpt)
+
         true
       end
 

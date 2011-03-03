@@ -8,10 +8,13 @@ module Palmade::Poste
 
     Cempty = "".freeze
     Cm = 'm'.freeze
+    Cw = 'w'.freeze
+    Cwb = 'wb'.freeze
+    Crb = 'rb'.freeze
     Cdot = '.'.freeze
     Czerobyte = "\000".freeze
     Cnewline = "\n".freeze
 
-    SMTP_MESSAGE_TRX_ID_FORMAT = "%04x%04x%04x%06x%06x%s".freeze
+    C16k = (16 * 1024).freeze
   end
 end

@@ -309,6 +309,7 @@ module Palmade::Poste
       C250MessageAccepted = "250 Message accepted\r\n".freeze
       C550MessageRejected = "550 Message rejected\r\n".freeze
 
+      Cdot = ".".freeze
       def process_data_line(ln)
         flush_chunk = lambda do
           receive_data_chunk(@databuffer)

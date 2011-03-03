@@ -98,10 +98,10 @@ module Palmade::Poste
         init.say "Listening to: %s:%d", ip, port
         EventMachine.start_server(ip, port, Palmade::Poste::SmtpClientConnection, &method(:initialize_connection))
       end
+    end
 
-      def initialize_connection(connection)
-        connection.set_server(self)
-      end
+    def initialize_connection(connection)
+      connection.set_server(self)
     end
   end
 end

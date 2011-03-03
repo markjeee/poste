@@ -72,7 +72,35 @@ DIAG
     end
 
     def working_path
-      File.expand_path(@config[:working_path])
+      if defined?(@working_path)
+        @working_path
+      else
+        @working_path = File.expand_path(@config[:working_path])
+      end
+    end
+
+    def tmp_path
+      if defined?(@tmp_path)
+        @tmp_path
+      else
+        if @config[:tmp_path] =~ /\A\//
+          @tmp_path = @config[:tmp_path]
+        else
+          @tmp_path = File.join(working_path, @config[:tmp_path])
+        end
+      end
+    end
+
+    def log_path
+      if defined?(@log_path)
+        @log_path
+      else
+        if @config[:log_path] =~ /\A\//
+          @log_path = @config[:log_path]
+        else
+          @log_path = File.join(working_path, @config[:log_path])
+        end
+      end
     end
 
     def spool

@@ -33,3 +33,7 @@ end
 
 task :default => :spec
 
+task :test_reset do
+  `rm -Rf spec/var`
+  `bin/poste -c spec/config/poste.yml initialize`
+end
